@@ -2,11 +2,14 @@ import type { AppProps } from 'next/app';
 import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  const isProd = process.env.NODE_ENV === 'production';
+  const basePath = isProd ? '/Client_Portfolio' : '';
 
   useEffect(() => {
     setIsMounted(true);
@@ -17,8 +20,15 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   // For static export, we don't use AnimatePresence as it requires dynamic routing
-  if (process.env.NODE_ENV === 'production') {
-    return <Component {...pageProps} />;
+  if (isProd) {
+    return (
+      <>
+        <Head>
+          <base href={`${basePath}/`} />
+        </Head>
+        <Component {...pageProps} />
+      </>
+    );
   }
 
   return (
